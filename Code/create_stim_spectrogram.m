@@ -12,46 +12,46 @@ all_sound_files= dir([stim_dir '**' filesep '*.wav']);
 mel_spect_params= struct('tWindow_s', 50e-3, 'Fs_SG_Hz', 1e3, 'FrequencyRange_Hz', [80, 20e3], 'NumBands', 64, 'level_dBSPL', 65);
 
 for fileVar=1:length(all_sound_files)
-    
+
     %% read audio file
     cur_fStruct= all_sound_files(fileVar);
     cur_fName_in= [cur_fStruct.folder filesep cur_fStruct.name];
 
-    [cur_stim, fs_stim]= audioread(cur_fName_in);
+    cur_fName_out= strrep(cur_fName_in, stim_dir, mel_spectrogram_dir);
+    cur_fName_out= strrep(cur_fName_out, '.wav', '.mat');
 
-    %% get mel spectrogram
-    [mel_S_dB,mel_freq_Hz,mel_time, mel_spect_params]= get_mel_spect(cur_stim, fs_stim, mel_spect_params);
+    if ~exist(cur_fName_out, 'file')
+        [cur_stim, fs_stim]= audioread(cur_fName_in);
 
-    %% plot spectrogram
-    if doPlot
-        figSize_cm= [3 3 18.3 9];
-        figure_prop_name = {'PaperPositionMode','units','Position', 'Renderer'};
-        figure_prop_val =  { 'auto'            ,'centimeters', figSize_cm, 'painters'};  % [Xcorner Ycorner Xwidth Ywidth]
-        figure(2);
-        clf;
-        set(gcf,figure_prop_name,figure_prop_val);
+        %% get mel spectrogram
+        [mel_S_dB,mel_freq_Hz,mel_time, mel_spect_params]= get_mel_spect(cur_stim, fs_stim, mel_spect_params);
 
-        imagesc(mel_time, mel_freq_Hz/1e3, mel_S_dB)
-        set(gca, 'YScale', 'log', 'YDir', 'normal', 'YTick', [.2, .5, 1, 2, 4, 8, 16], 'TickDir', 'both', 'Box', 'off', 'Position', [.08, .15, .9, .78], 'Units', 'normalized');
-        xlabel('Time (s)')
-        ylabel('Freq, kHz')
-        title(sprintf('MelSpect: %s', cur_fStruct.name), 'Interpreter','none')
-    end
+        %% plot spectrogram
+        if doPlot
+            figSize_cm= [3 3 18.3 9];
+            figure_prop_name = {'PaperPositionMode','units','Position', 'Renderer'};
+            figure_prop_val =  { 'auto'            ,'centimeters', figSize_cm, 'painters'};  % [Xcorner Ycorner Xwidth Ywidth]
+            figure(2);
+            clf;
+            set(gcf,figure_prop_name,figure_prop_val);
 
-    %% save spectrogram
-    if doSave
-        cur_fName_out= strrep(cur_fName_in, stim_dir, mel_spectrogram_dir);
-        cur_fName_out= strrep(cur_fName_out, '.wav', '.mat');
-        if ~isfolder(fileparts(cur_fName_out))
-            mkdir(fileparts(cur_fName_out));
+            imagesc(mel_time, mel_freq_Hz/1e3, mel_S_dB)
+            set(gca, 'YScale', 'log', 'YDir', 'normal', 'YTick', [.2, .5, 1, 2, 4, 8, 16], 'TickDir', 'both', 'Box', 'off', 'Position', [.08, .15, .9, .78], 'Units', 'normalized');
+            xlabel('Time (s)')
+            ylabel('Freq, kHz')
+            title(sprintf('MelSpect: %s', cur_fStruct.name), 'Interpreter','none')
         end
-        mel_spectrogram_struct= struct('mel_S_dB', mel_S_dB, 'mel_freq_Hz', mel_freq_Hz, 'stim_filename', cur_fName_in, 'mel_spect_params', mel_spect_params);
-        save(cur_fName_out, 'mel_spectrogram_struct');
+
+        %% save spectrogram
+        if doSave
+            if ~isfolder(fileparts(cur_fName_out))
+                mkdir(fileparts(cur_fName_out));
+            end
+            mel_spectrogram_struct= struct('mel_S_dB', mel_S_dB, 'mel_freq_Hz', mel_freq_Hz, 'stim_filename', cur_fName_in, 'mel_spect_params', mel_spect_params);
+            save(cur_fName_out, 'mel_spectrogram_struct');
+        end
     end
 end
-
-
-
 
 %% functions
 function [mel_S_dB, mel_freq_Hz, mel_time, mel_spect_params]= get_mel_spect(stim, fs_Hz, mel_spect_params)
@@ -64,7 +64,6 @@ FrequencyRange_Hz= min(fs_Hz/2, mel_spect_params.FrequencyRange_Hz);
 [S_mag,mel_freq_Hz,mel_time] = melSpectrogram(stim, fs_Hz, "Window", mel_window, "OverlapLength", mel_overlap_len, "FrequencyRange", FrequencyRange_Hz, "NumBands", mel_spect_params.NumBands);
 mel_S_dB= pow2db(S_mag);
 end
-
 
 function vecOut= rescale_sig(vecIn, newSPL, verbose)
 
