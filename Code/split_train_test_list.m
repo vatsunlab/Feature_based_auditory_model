@@ -1,14 +1,21 @@
-function split_train_test_list(inclass_call_type, model_list_output_dir)
+function split_train_test_list(inclass_call_type, mel_spectrogram_dir, model_list_output_dir, train_test_split)
+% function split_train_test_list(inclass_call_type, mel_spectrogram_dir, model_list_output_dir, train_test_split)
+% Usage: Split inclass and outclass data for training and testing 
+% Inputs:
+%   1. inclass_call_type [string]: name of the inclass/target call 
+%   2. mel_spectrogram_dir [string]: folder that has all call types as
+%       subfolder 
+%   3. model_list_output_dir [string]: folder to save all list (txt) files 
+%   4. train_test_split [scalar]: fraction of calls for training, rest
+%       (1-train_test_split) for testing 
+% Output: None 
+% 
+% -----------------------------------------------------------------------
+%   Copyright 2023 Satyabrata Parida, Shi Tong Liu, & Srivatsun Sadagopan
 
 % Note: 
 % Target & inclass mean the same thing 
 % Non-target & outclass mean the same thing 
-
-%% Directory structure & target call name 
-train_test_split= 0.75; % 
-
-Root_FMAM_Dir= fileparts(pwd);
-mel_spectrogram_dir= [Root_FMAM_Dir filesep 'Mel_spect' filesep];
 
 %% Read all call names and split into inclass/outclass groups 
 rng(0); % set seed for reproducibility 
