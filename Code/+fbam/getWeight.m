@@ -2,8 +2,8 @@ function W = getWeight(f_c,f_cbar,fbar_c,fbar_cbar)
 % function W = getWeight(f_c,f_cbar,fbar_c,fbar_cbar)
 % Usage: get weight of a feature (based on log-likelihood ratio) using
 %   detections/misses for inclass and outclass calls 
-% Input: 
-%   1. f1_c [binary vector]: (correct) inclass detections 
+% Inputs: 
+%   1. f_c [binary vector]: (correct) inclass detections 
 %   2. f_cbar [binary vector]: (incorrect) outclass detections 
 %   3. fbar_c [binary vector]: (incorrect) inclass misses 
 %   4. fbar_cbar [binary vector]: (correct) outclass misses 
