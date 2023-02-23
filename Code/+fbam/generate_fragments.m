@@ -1,15 +1,21 @@
 function generate_fragments(spect_files, FragFiles, fs_Hz, durMax)
-% RUNFRAGGENAN Randomly generates fragments of cochleagram
-%   RUNFRAGGENAN(COGFILES,FRAGFILES,FRAGIND) generate fragment files from
-%   cochleagrams specified by COGFILES and save under directories specified
-%   by FRAGFILES. FRAGIND is used to indexing the fragments. Both COGFILES
-%   and FRAGFILES must be cell arrays, and FRAGIND must be numeric array
-%
-% fragFiles should be the full list so that random number generator works consistently. 
-% fragInds2save indicates which fragFiles to actually save
-%   CALLED FUNCTIONS: N/A
+% function generate_fragments(spect_files, FragFiles, fs_Hz, durMax)
+% Usage: Randomly generate fragments from spectrograms/cochleagram and save
+%   those fragments 
+% Inputs:
+%   1. spect_files [cell array]: Call spectrogram filenames 
+%   2. FragFiles [cell array]: Random feature (fragment) filenames to save 
+%   3. fs_Hz [scalar]: sampling frequency to use for FragFiles (can be
+%       different from the fs for spect_files)
+%   4. template [2D matrix]: the template (i.e., the spectrotemporal receptive field
+%       of a feature)
+%   5. durMax [scalar]: if features should be time constrained 
+% Output: None 
+% 
+% -----------------------------------------------------------------------
+%   Copyright 2023 Satyabrata Parida, Shi Tong Liu, & Srivatsun Sadagopan
 
-
+%% 
 % CHECK INPUT TPYE
 if ~iscell(spect_files) || ~iscell(FragFiles)
     error('Input Type Not Valid')
@@ -25,7 +31,6 @@ just_frag_names= cell(numel(FragFiles), 1);
 for fragVar=1:numel(FragFiles)
     [~, just_frag_names{fragVar}]= fileparts(FragFiles{fragVar});
 end
-
 
 FragInds= cellfun(@(x) sscanf(x, 'frag%d'), just_frag_names);
 
@@ -53,27 +58,27 @@ for fragVar= 1:numel(FragFiles)
     
     % SAVE RESULTS
     % convert from indices to numeric values
-    Flo= CF_Hz(iFlo);  % lower freq, in same unit as freq vector
-    Fhi= CF_Hz(iFhi);  % upper freq, in same unit as freq vector
+    Flo_Hz= CF_Hz(iFlo);  % lower freq, in same unit as freq vector
+    Fhi_Hz= CF_Hz(iFhi);  % upper freq, in same unit as freq vector
     %     CF= (Fhi-Flo)/2;  % center freq, in same unit as freq vector
-    CF= sqrt(Fhi*Flo);  % center freq, in same unit as freq vector
-    BW= log2(Fhi/Flo);  % bandwidth, in octaves
-    T1= T(iT1);  % lower freq, in same unit as time vector
-    T2= T(iT2);  % upper freq, in same unit as time vector
-    DUR= T2-T1;  % temporal duration, in same unit as time vector
+    CF_Hz= sqrt(Fhi_Hz*Flo_Hz);  % center freq, in same unit as freq vector
+    BW_octave= log2(Fhi_Hz/Flo_Hz);  % bandwidth, in octaves
+    T1_sec= T(iT1);  % lower freq, in same unit as time vector
+    T2_sec= T(iT2);  % upper freq, in same unit as time vector
+    DUR_sec= T2_sec-T1_sec;  % temporal duration, in same unit as time vector
     
     % save data structure
     frag.fragindex= FragInds(fragVar);
     frag.parentfile= spect_files{n,:};
-    frag.data= data;
-    frag.Fs= fs_Hz;
-    frag.freqlower= Flo;
-    frag.frequpper= Fhi;
-    frag.centerfreq= CF;
-    frag.bandwidth= BW;
-    frag.timestart= T1;
-    frag.timestop= T2;
-    frag.duration= DUR;
+    frag.strf= data; % spectro-temporal receptive field 
+    frag.fs_Hz= fs_Hz;
+    frag.freqlower_Hz= Flo_Hz;
+    frag.frequpper_Hz= Fhi_Hz;
+    frag.centerfreq_Hz= CF_Hz;
+    frag.bandwidth_octave= BW_octave;
+    frag.timestart_sec= T1_sec;
+    frag.timestop_sec= T2_sec;
+    frag.duration_sec= DUR_sec;
     
     if ~exist(FragFiles{fragVar}, 'file')
         save(FragFiles{fragVar},'frag');  %save fragment
@@ -82,21 +87,20 @@ end
 
 % SUB FUNCTIONS
 %--------------------------------------------------------------------------
-function [iFlo,iFhi]= randBW(F)
+function [iFlo,iFhi]= randBW(Freq_Hz)
 % PICK RANDOM BANDWIDTH
 BWlb= 1;  
-BWub= numel(F)-1;  %lower and upper bound of bandwidth, in indices
+BWub= numel(Freq_Hz)-1;  %lower and upper bound of bandwidth, in indices
 iBW= datasample(BWlb:BWub,1);  % pick random bandwidth, in indices
 % PICK RANDOM LOWER FREQ, AND CALCULATE UPPER FREQ
-iFlo= datasample(1:numel(F)-iBW,1);  % lower freq, in indices
+iFlo= datasample(1:numel(Freq_Hz)-iBW,1);  % lower freq, in indices
 iFhi= iFlo+iBW;  % upper freq, in indices
 
-
-function [iT1,iT2]= randDUR(T, dur_ind_max)
+function [iT1,iT2]= randDUR(T_sec, dur_ind_max)
 % PICK RANDOM DURATION
 DURlb= 1;  
-DURub= numel(T)-1;  %lower and upper bound of duration, in indices
+DURub= numel(T_sec)-1;  %lower and upper bound of duration, in indices
 iDUR= datasample(DURlb:min(dur_ind_max, DURub),1);  % pick random duration, in indices
 % PICK RANDOM LOWER FREQ, AND CALCULATE UPPER FREQ
-iT1= datasample(1:numel(T)-iDUR,1);  % starting time, in indices
+iT1= datasample(1:numel(T_sec)-iDUR,1);  % starting time, in indices
 iT2= iT1+iDUR;  % end time, in indices
