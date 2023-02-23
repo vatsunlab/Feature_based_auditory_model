@@ -29,7 +29,7 @@ function corr_values = getXcorr_normVraw(Calls, Flo_Hz, Fhi_Hz, template, fs_Hz,
 %% Parse input
 fun_paramsIN=inputParser;
 
-default_params= struct('comp_routine', 'for', 'xcorr_routine', 'raw');
+default_params= struct('comp_routine', 'for', 'xcorr_routine', 'norm');
 addRequired(fun_paramsIN, 'Calls', @iscell);
 addRequired(fun_paramsIN, 'Flo_Hz', @isnumeric);
 addRequired(fun_paramsIN, 'Fhi_Hz', @isnumeric);
