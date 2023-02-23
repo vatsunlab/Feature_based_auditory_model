@@ -31,7 +31,7 @@ end
 %% Parse input
 fun_paramsIN=inputParser;
 
-default_params= struct('comp_routine', 'for', 'xcorr_routine', 'raw');
+default_params= struct('comp_routine', 'for', 'xcorr_routine', 'norm');
 addRequired(fun_paramsIN, 'fragFiles', @iscell);
 addRequired(fun_paramsIN, 'featFiles', @iscell);
 addRequired(fun_paramsIN, 'calls_inclass', @iscell);
@@ -88,7 +88,7 @@ feat.featindex = fragInd;
 feat.fragfile = fragFile;
 feat.inclasscorr = corr_inclass;
 feat.outclasscorr = corr_outclass;
-feat.Fs= fs_Hz;
+feat.fs_Hz= fs_Hz;
 
 % use 100 point vector to find optimal threshold
 theta_prc = prctile(feat.inclasscorr(:),1:1:100);
