@@ -145,7 +145,7 @@ for featVar = 1:1:size(MIF,1)
     load(MIFfiles{featVar});
     load(feat.fragfile);
     MIFinfo(featVar,:) = [MIF(featVar,1), MIF(featVar,2), feat.merit feat.thresh,...
-        feat.weight, frag.centerfreq, frag.bandwidth, frag.duration];
+        feat.weight, frag.centerfreq_Hz, frag.bandwidth_octave, frag.duration_sec];
 end
 MIFtable = array2table(MIFinfo,'VariableNames',{'Fragindex','AddedI',...
     'Merit','Threshold','Weight','CF','BW','Duration'});
