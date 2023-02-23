@@ -1,21 +1,17 @@
-clear;
-clc;
+function split_train_test_list(inclass_call_type, model_list_output_dir)
 
 % Note: 
 % Target & inclass mean the same thing 
 % Non-target & outclass mean the same thing 
 
 %% Directory structure & target call name 
-
-inclass_call_type= 'Whine';
 train_test_split= 0.75; % 
 
 Root_FMAM_Dir= fileparts(pwd);
 mel_spectrogram_dir= [Root_FMAM_Dir filesep 'Mel_spect' filesep];
-Root_trained_model_dir= [Root_FMAM_Dir filesep 'Trained_models' filesep];
 
 %% Read all call names and split into inclass/outclass groups 
-rng(0); % set seed for reproducability 
+rng(0); % set seed for reproducibility 
 
 all_mel_spects= dir([mel_spectrogram_dir '**' filesep '*.mat']);
 all_call_names= cellfun(@(x) extract_call_name(x), {all_mel_spects.folder}', 'UniformOutput',false);
@@ -39,11 +35,6 @@ outclass_melSGnames_test= setdiff(outclass_melSGnames, outclass_melSGnames_train
 
 %% Define output directory and filenames 
 
-model_list_output_dir= sprintf('%s%s_vs_rest_FBAM%strain_test_list%s', Root_trained_model_dir, inclass_call_type, filesep, filesep);
-if ~isfolder(model_list_output_dir)
-    mkdir(model_list_output_dir);
-end
-
 inclass_fName_fragments= sprintf('%sinclass_files_frag.txt', model_list_output_dir);
 inclass_fName_train= sprintf('%sinclass_files_train.txt', model_list_output_dir);
 outclass_fName_train= sprintf('%soutclass_files_train.txt', model_list_output_dir);
@@ -61,6 +52,8 @@ writetable(cell2table(inclass_melSGnames_train), inclass_fName_train, 'WriteVari
 writetable(cell2table(outclass_melSGnames_train), outclass_fName_train, 'WriteVariableNames', false); % nontarget call | training 
 writetable(cell2table(inclass_melSGnames_test), inclass_fName_test, 'WriteVariableNames', false); % target call | testing 
 writetable(cell2table(outclass_melSGnames_test), outclass_fName_test, 'WriteVariableNames', false); % nontarget call | testing 
+
+end
 
 %% Functions 
 function call_name= extract_call_name(dirName)
