@@ -1,5 +1,5 @@
 # Feature_based_auditory_model: 
-Code to train a feature-based auditory categorization model to categorize a single call/sound type from all other call/sound types. 
+Code to train a feature-based auditory categorization model to categorize a single call/sound type from all other call/sound types. These code are published under Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) license. 
 
 ## Directory structure: 
 * "Code": Contains code files. 
