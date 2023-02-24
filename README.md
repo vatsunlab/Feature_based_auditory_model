@@ -1,2 +1,11 @@
-# Feature_based_auditory_model
-Code to train feature-based auditory categorization models. 
+# Feature_based_auditory_model: Code to train feature-based auditory categorization models. 
+
+## Directory structure: 
+# "Code": Code to train and test a feature-based auditory categorization model. 
+# "Stimuli": The root directory for different call (sound) types. Each subfolder inside Stimuli is considered a different group. 
+# "Mel_spect": Mel-scaled spectrogram for each stimulus inside "Stimuli". Directory structure of "Stimuli" and "Mel_spect" will be identical. "Mel_spect" is automatically populated by running the script Code/create_stim_spectrogram.m.
+# "Trained_models": Folder where trained models are saved as subfolders. 
+
+## (Two) Key scripts under "Code"
+# 1. create_stim_spectrogram -> creates a mel-scaled spectrogram inside the folder "Mel_spect" for each stimulus inside the folder "Stimuli". 
+# 2. full_FBAM_model -> to train a model for a single call type. Output is stored in the folder "Trained_models" 
