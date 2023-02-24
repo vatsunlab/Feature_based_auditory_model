@@ -2,8 +2,8 @@
 
 ## Directory structure: 
 * "Code": Code to train and test a feature-based auditory categorization model. 
-* "Stimuli": The root directory for different call (sound) types. Each subfolder inside Stimuli is considered a different group. 
-* "Mel_spect": Mel-scaled spectrogram for each stimulus inside "Stimuli". Directory structure of "Stimuli" and "Mel_spect" will be identical. "Mel_spect" is automatically populated by running the script Code/create_stim_spectrogram.m.
+* "Stimuli": The root directory for different call (sound) types. Each subfolder inside the "Stimuli" folder is considered a different sound/call type. The subfolders should contain sound files (wav or mp3 or any file-extension that matlab can read using audioread). 
+* "Mel_spect": Mel-scaled spectrogram for each stimulus inside the "Stimuli" folder. Directory structure of "Stimuli" and "Mel_spect" will be identical. "Mel_spect" is automatically populated by running the script Code/create_stim_spectrogram.m.
 * "Trained_models": Folder where trained models are saved as subfolders. 
 
 ## (Two) Key scripts under "Code"
