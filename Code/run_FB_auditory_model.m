@@ -13,7 +13,7 @@ inclass_call_type= 'Wheek'; % The model is trained to classify inclass_call_type
 model_params= struct( ...
     'num_fragments', 200, ... % number of initial random features. The higher, the better (but could be resource intensive). A good ballpark number = ~5x-10x the number of (inclass + outclass) calls 
     'xcorr_routine', 'norm', ... % cross-correlation routine:  options: 'norm' (recommended), 'raw', 'bf_norm'
-    'comp_routine', 'gpu', ... % computational routine: options: 'parfor' (recommended), 'gpu', 'for'
+    'comp_routine', 'parfor', ... % computational routine: options: 'parfor' (recommended), 'gpu', 'for'
     'fs_Hz', 1000, ... % (temporal) sampling frequency of spectrogram/cochleagram 
     'num_MIFsets', 1, ... % How many instantiations of the model. Good to ensure convergence of the model. 
     'do_frag', 1, ... % whether to generate fragments or not, should be set to 1
