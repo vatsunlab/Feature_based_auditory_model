@@ -17,6 +17,10 @@ function split_train_test_list(inclass_call_type, mel_spectrogram_dir, model_lis
 % Target & inclass mean the same thing 
 % Non-target & outclass mean the same thing 
 
+if ~isfolder(model_list_output_dir)
+    mkdir(model_list_output_dir);
+end
+
 %% Read all call names and split into inclass/outclass groups 
 rng(0); % set seed for reproducibility 
 

@@ -28,16 +28,22 @@ dir_struct.mel_spectrogram_dir= [dir_struct.Root_FBAM_dir filesep 'Mel_spect' fi
 %  Folders that will be created (if don't exist already)
 dir_struct.Root_out_dir= [dir_struct.Root_FBAM_dir filesep 'Trained_models' filesep]; % Folder that has trained models 
 dir_struct.FBAM_dir= sprintf('%s%s_vs_rest_FBAM_%s', dir_struct.Root_out_dir, inclass_call_type, model_params.xcorr_routine); % xcorr_routine should be in the name because a different model
+
+% Check for existing FBAM_dir
 count= dir([dir_struct.FBAM_dir '*']);
-% count= numel(count);
-count= numel(count)+1;
+count= numel(count);
+if count>0
+    % means folder already exists
+    inp_str= input('Model directories already exist. Create new (n) folder or reuse the same (s) folder?', 's');
+    if strcmpi(inp_str, 'n')
+        count= numel(count)+1;
+    end
+end
 dir_struct.FBAM_dir= sprintf('%s_run%d%s', dir_struct.FBAM_dir, count, filesep);
+
 dir_struct.FBAM_list_dir= sprintf('%strain_test_list%s', dir_struct.FBAM_dir, filesep);
 
 %% create training/testing lists 
-if ~isfolder(dir_struct.FBAM_list_dir)
-    mkdir(dir_struct.FBAM_list_dir);
-end
 train_test_split= 0.75;
 helper.split_train_test_list(inclass_call_type, dir_struct.mel_spectrogram_dir, dir_struct.FBAM_list_dir, train_test_split); % create training and testing list by splitting all files 
 
