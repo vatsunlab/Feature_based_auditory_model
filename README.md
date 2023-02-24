@@ -12,4 +12,4 @@
 
 ## Note: Stimuli and Mel_spect already contain guinea pig vocalization stimuli. To run the model on different stimuli, delete those subfolders and add different call types as subfolders inside "Stimuli". Then run
 1. create_stim_spectrogram. 
-2. full_FBAM_model (after changing the variable "inclass_call_type", which sets the target/inclass call type. Al other calls are considered non-target/outclass). 
+2. full_FBAM_model (after changing the variable "inclass_call_type", which sets the target/inclass call type. All other calls are considered non-target/outclass). 
