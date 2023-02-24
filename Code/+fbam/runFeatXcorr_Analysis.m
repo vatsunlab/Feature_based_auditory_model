@@ -44,11 +44,12 @@ fun_paramsIN.KeepUnmatched= true;
 parse(fun_paramsIN, fragFiles, featFiles, calls_inclass, calls_outclass, varargin{:});
 
 %% COMPUTE CROSS-CORRELATION
+fprintf('Computing threshold and weight of features...\n');
+print_handle= 0;
+for fragVar = 1:numel(fragFiles)
+    if ~exist(featFiles{fragVar}, 'file')
 
-for i = 1:numel(fragFiles)
-    if ~exist(featFiles{i}, 'file')
-
-        [template, Flo_Hz, Fhi_Hz, fragInd, fs_Hz] = pfLoadFrag(fragFiles{i});
+        [template, Flo_Hz, Fhi_Hz, fragInd, fs_Hz] = pfLoadFrag(fragFiles{fragVar});
 
         if max(abs(template(:)))>eps  % weird error for some wheeks
             % calculate feature correlation values for inclass and outclass calls
@@ -59,9 +60,17 @@ for i = 1:numel(fragFiles)
             corr_outclass= nan; % weird error for some wheeks
         end
 
-        runFeatAna_Save(featFiles{i}, corr_inclass, corr_outclass, fragInd, fragFiles{i}, fs_Hz);
+        runFeatAna_Save(featFiles{fragVar}, corr_inclass, corr_outclass, fragInd, fragFiles{fragVar}, fs_Hz);
     end
+
+    if rem(fragVar, 10)==0
+        fprintf(repmat('\b', 1, print_handle))
+        print_handle= fprintf('   -> %.0f%% done %d/%d features done', 100*fragVar/numel(fragFiles), fragVar, numel(fragFiles));
+    end
+    
 end
+
+fprintf('\nDone computing threshold and weight of features!! \n......................................\n')
 end
 
 % SUB FUNCTIONS

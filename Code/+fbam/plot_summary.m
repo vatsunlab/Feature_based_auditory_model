@@ -117,7 +117,7 @@ plot(train_detect_outclass, zeros(size(train_detect_outclass)), 'xr', 'MarkerSiz
 xlim(corr_xlim_train);
 ylim([-.1, 1.1]);
 % legend('Inclass', 'Outclass', 'Location', 'east');
-xlabel('Correlation');
+xlabel('Model weighted response');
 set(gca, 'YTick', [0, 1], 'YTickLabel', {'Out', 'In'})
 % text(0.02, 0.7, {'Training'; 'output'; 'distribution'}, 'Units', 'normalized', 'HorizontalAlignment','left')
 title('Training: model output distribution')
@@ -144,7 +144,7 @@ plot(test_detect_outclass, zeros(size(test_detect_outclass)), 'xr', 'MarkerSize'
 xlim(corr_xlim_test);
 ylim([-.1, 1.1]);
 % legend('Inclass', 'Outclass', 'Location', 'east');
-xlabel('Correlation');
+xlabel('Model weighted response');
 set(gca, 'YTick', [0, 1], 'YTickLabel', {'Out', 'In'})
 % text(0.02, 0.7, {'Test'; 'output'; 'distribution'}, 'Units', 'normalized', 'HorizontalAlignment','left')
 title('Test: model output distribution')

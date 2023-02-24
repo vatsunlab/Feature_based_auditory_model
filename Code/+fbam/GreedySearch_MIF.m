@@ -44,6 +44,10 @@ else
     error('No Merit File Found')
 end
 
+
+fprintf('Running serial greedy search to find a set of MIFs...\n');
+print_handle= 0;
+
 % FIND MIF SET
 indCopy = find(cellfun(@(x) ischar(x) && strcmpi(x,'copy'), varargin));
 if isempty(indCopy)
@@ -85,6 +89,8 @@ if isempty(indCopy)
         
         if Ik>0
             MIF = [MIF; merit_data(n_max).featindex Ik];
+            fprintf(repmat('\b', 1, print_handle));
+            print_handle= fprintf('Found %d MIFs', size(MIF,1));
         else
             break;  % if no information can be added, end Greedy Search
         end
@@ -150,3 +156,5 @@ end
 MIFtable = array2table(MIFinfo,'VariableNames',{'Fragindex','AddedI',...
     'Merit','Threshold','Weight','CF_Hz','BW_octave','Duration_sec'});
 save(Table_fName,'MIFtable','MIFfiles')
+
+fprintf('\nDone with serial greedy search!!\n');

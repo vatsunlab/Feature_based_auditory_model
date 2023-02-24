@@ -32,8 +32,11 @@ for fragVar=1:numel(FragFiles)
     [frag_root_dir, just_frag_names{fragVar}]= fileparts(FragFiles{fragVar});
 end
 already_saved_frags= dir([frag_root_dir filesep '*.mat']);
-if numel(already_saved_frags)~=numel(FragFiles) % go through the loop only if all fragments are not saved already 
-    
+
+if numel(already_saved_frags)~=numel(FragFiles) % go through the loop only if all fragments are not saved already
+
+    fprintf('Generating fragments...\n');
+    print_handle= 0;
     FragInds= cellfun(@(x) sscanf(x, 'frag%d'), just_frag_names);
 
     for fragVar= 1:numel(FragFiles)
@@ -85,7 +88,18 @@ if numel(already_saved_frags)~=numel(FragFiles) % go through the loop only if al
         if ~exist(FragFiles{fragVar}, 'file')
             save(FragFiles{fragVar},'frag');  %save fragment
         end
+
+        if rem(fragVar, 10)==0
+            fprintf(repmat('\b', 1, print_handle))
+            print_handle= fprintf('   -> %.0f%% done %d/%d fragments', 100*fragVar/numel(FragFiles), fragVar, numel(FragFiles));
+        end
+
     end
+
+    fprintf('\nDone generating fragments!! \n......................................\n \n')
+
+else 
+    fprintf('Fragments have already been generated for this model! \n');
 end
 
 % SUB FUNCTIONS

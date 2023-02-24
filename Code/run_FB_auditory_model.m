@@ -4,11 +4,14 @@ function run_FB_auditory_model()
 % Set the variables in the "Initialize paramaters" section to select
 % call/sound type and model parameters. 
 %
+% To choose a different mel-spectrogram folder (instead of the default
+% 'Mel_spect' folder), update the variable dir_struct.mel_spectrogram_dir
+% in the "Initialize directory structure" section.
 % -----------------------------------------------------------------------
 %   Copyright 2023 Satyabrata Parida, Shi Tong Liu, & Srivatsun Sadagopan
 
 %% Initialize paramaters 
-inclass_call_type= 'Wheek'; % The model is trained to classify inclass_call_type from the rest of the call types within the folder dir_struct.mel_spectrogram_dir
+inclass_call_type= 'Purr'; % The model is trained to classify inclass_call_type from the rest of the call types within the folder dir_struct.mel_spectrogram_dir
 
 model_params= struct( ...
     'num_fragments', 200, ... % number of initial random features. The higher, the better (but could be resource intensive). A good ballpark number = ~5x-10x the number of (inclass + outclass) calls 
@@ -34,10 +37,14 @@ count= dir([dir_struct.FBAM_dir '*']);
 count= numel(count);
 if count>0
     % means folder already exists
-    inp_str= input('Model directories already exist. Create new (n) folder or reuse the same (s) folder?', 's');
+    temp_FBAM_dir= strrep(sprintf('%s_run%d', dir_struct.FBAM_dir, count), dir_struct.Root_out_dir, '');
+    inp_str= input(sprintf('Output directory (%s) already exists. \nCreate new (n) or reuse the same (s) folder?', temp_FBAM_dir), 's');
     if strcmpi(inp_str, 'n')
         count= numel(count)+1;
     end
+else  
+    % first time 
+    count= count+1;
 end
 dir_struct.FBAM_dir= sprintf('%s_run%d%s', dir_struct.FBAM_dir, count, filesep);
 

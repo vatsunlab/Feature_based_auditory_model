@@ -21,6 +21,8 @@ if ~isfolder(model_list_output_dir)
     mkdir(model_list_output_dir);
 end
 
+fprintf('Creating lists in %s\n', model_list_output_dir)
+
 %% Read all call names and split into inclass/outclass groups 
 rng(0); % set seed for reproducibility 
 

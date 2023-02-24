@@ -110,7 +110,7 @@ for MIFset_num=1:num_MIFsets
         OutfName= sprintf('%sSummary_%s_fs%.0fHz', dir_struct.MIF_out_dir, inclass_call_type, fs_Hz);
         fbam.plot_summary(fNameStruct, MIF_Table_file, MIF_Results_file_train, MIF_Results_file_test);
         print(OutfName, '-dpng',  '-r600');
-        fprintf('All done!!\n')
+        fprintf('All Done!!\n')
     end
     %     else
     %         fprintf('Output files already exist for this condition.\n');
