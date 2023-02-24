@@ -24,7 +24,9 @@ Code to train a feature-based auditory categorization model to categorize a sing
     * A new folder will be created under "*/Feature_based_auditory_model/Trained_models/". 
     * The model runs on files already present in "*/Feature_based_auditory_model/Mel_spect/". 
     * A summary figure (like the following) will appear after completion of model training and testing. 
-    * ![(row1) Examplar inclass and outclass spectrograms; (row2) duration and bandwidth summary of all MIFs, the most informative feature for this model; (row3) Model output for all inclass and outclass training calls and the corresponding ROC; (row4) Same format at row3 but for test calls.](/Code/example_fig/Summary_Chut_fs1000Hz.png "Example summary figure")
+    * ![(row1) Examplar inclass and outclass spectrograms; (row2) duration and bandwidth summary of all MIFs, the most informative feature for this model; (row3) Model output for all inclass and outclass training calls and the corresponding ROC; (row4) Same format at row3 but for test calls.](https://www.dropbox.com/s/jxj9shbqwuy47nk/Summary_Chut_fs1000Hz.png?dl=0 "Example summary figure")
+    
+
 
 ## Training/testing the model for different stimuli 
 
