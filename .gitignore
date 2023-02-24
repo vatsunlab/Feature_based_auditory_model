@@ -1,2 +1,3 @@
 Code/+hidden/**
 Trained_models/**
+!Trained_models/readme.txt
