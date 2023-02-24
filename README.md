@@ -8,4 +8,8 @@
 
 ## (Two) Key scripts under "Code"
 # 1. create_stim_spectrogram -> creates a mel-scaled spectrogram inside the folder "Mel_spect" for each stimulus inside the folder "Stimuli". 
-# 2. full_FBAM_model -> to train a model for a single call type. Output is stored in the folder "Trained_models" 
+# 2. full_FBAM_model -> to train a model for a single call type. Output is stored in the folder "Trained_models".  
+
+## Note: Stimuli and Mel_spect already contain guinea pig vocalization stimuli. To run the model on different stimuli, delete those subfolders and add different call types as subfolders inside "Stimuli". Then run
+1. create_stim_spectrogram 
+2. full_FBAM_model (after changing the variable "inclass_call_type")
