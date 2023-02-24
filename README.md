@@ -12,12 +12,12 @@ Code to train a feature-based auditory categorization model to categorize a sing
 ## Key scripts 
 (Two) Key scripts under "Code". Run these scripts from the same folder (i.e., */Feature_based_auditory_model/Code/).
 1. create_stim_spectrogram -> creates a mel-scaled spectrogram inside the folder "Mel_spect" for each stimulus (recursively) inside the folder "Stimuli". 
-2. full_FBAM_model -> to train a model for a single call type. Output is stored in the folder "Trained_models".  
+2. run_FB_auditory_model -> to train a model for a single call type. Output is stored in the folder "Trained_models".  
 
 ## Training/testing the model for different stimuli 
 Note: Folders "Stimuli" and "Mel_spect" already contain guinea pig vocalization stimuli. To run the model on different stimuli, delete those subfolders and add different call types as subfolders inside "Stimuli". Then run (from the folder "/Feature_based_auditory_model/Code/")
 1. create_stim_spectrogram. 
-2. full_FBAM_model (after changing the variable "inclass_call_type", which sets the target/inclass call type. All other calls are considered non-target/outclass). 
+2. run_FB_auditory_model (after changing the variable "inclass_call_type", which sets the target/inclass call type. All other calls are considered non-target/outclass). 
 
 ## References 
 If you use the package, please cite the following articles. 
