@@ -31,7 +31,7 @@ if ~isfolder(dir_struct.FBAM_list_dir)
     mkdir(dir_struct.FBAM_list_dir);
 end
 train_test_split= 0.75;
-split_train_test_list(inclass_call_type, dir_struct.mel_spectrogram_dir, dir_struct.FBAM_list_dir, train_test_split); % create training and testing list by splitting all files 
+helper.split_train_test_list(inclass_call_type, dir_struct.mel_spectrogram_dir, dir_struct.FBAM_list_dir, train_test_split); % create training and testing list by splitting all files 
 
 %% Train FB model 
 fbam.train_FB_auditory_model(inclass_call_type, dir_struct, model_params);
