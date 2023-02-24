@@ -43,9 +43,9 @@ function create_stim_spectrogram(varargin)
 
 % Default directory structure.
 Root_FBAM_Dir= fileparts(pwd);
-def_stim_dir= [Root_FBAM_Dir filesep 'Stimuli' filesep]; % Set where stimuli are located
-def_mel_spectrogram_dir= [Root_FBAM_Dir filesep 'Mel_spect' filesep]; % Set where spectrograms will be saved
-def_mel_spect_params= struct('tWindow_s', 50e-3, 'Fs_SG_Hz', 1e3, 'FrequencyRange_Hz', [80, 20e3], 'NumBands', 64, 'level_dBSPL', 65);
+def_stim_dir= [Root_FBAM_Dir filesep 'Stimuli' filesep]; % Default stimuli root folder 
+def_mel_spectrogram_dir= [Root_FBAM_Dir filesep 'Mel_spect' filesep]; % Default spectrogram root folder 
+def_mel_spect_params= struct('tWindow_s', 50e-3, 'Fs_SG_Hz', 1e3, 'FrequencyRange_Hz', [80, 20e3], 'NumBands', 64, 'level_dBSPL', 65); % Default spectrogram parameters 
 
 % Parse inputs 
 fun_paramsIN=inputParser;
@@ -57,7 +57,7 @@ addParameter(fun_paramsIN, 'verbose', default_params.verbose, @islogical)
 fun_paramsIN.KeepUnmatched= true;
 parse(fun_paramsIN, varargin{:});
 
-% look for missing fieldnames in mel_spect_params
+% Look for missing fieldnames in mel_spect_params
 mel_spect_params= fun_paramsIN.Results.mel_spect_params;
 missing_fields= setdiff(fieldnames(def_mel_spect_params), fieldnames(mel_spect_params));
 for fieldVar=1:length(missing_fields)
@@ -82,7 +82,7 @@ end
 already_exist_count= 0;
 for fileVar=1:length(all_sound_files)
 
-    % read audio file
+    % read the audio file
     cur_fStruct= all_sound_files(fileVar);
     cur_fName_in= [cur_fStruct.folder filesep cur_fStruct.name];
 
