@@ -11,6 +11,12 @@ doSave= 1;
 all_sound_files= dir([stim_dir '**' filesep '*.wav']);
 mel_spect_params= struct('tWindow_s', 50e-3, 'Fs_SG_Hz', 1e3, 'FrequencyRange_Hz', [80, 20e3], 'NumBands', 64, 'level_dBSPL', 65);
 
+if numel(all_sound_files)==0
+    fprintf('Did not find any sound files inside %s\n', stim_dir)
+elseif numel(all_sound_files)>0
+    fprintf('Found %d sound files, Creating mel-scaled spectrograms now\n', numel(all_sound_files))
+end
+
 for fileVar=1:length(all_sound_files)
 
     %% read audio file
