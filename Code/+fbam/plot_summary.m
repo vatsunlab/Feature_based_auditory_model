@@ -92,7 +92,8 @@ elseif strcmp(time_scale, 'log')
 end
 xlabel('MIF dur, ms');
 ylabel('Bandwidth, kHz');
-title('MIF summary')
+title(sprintf('MIF summary (#MIFs=%d)', numFeatures))
+ylim(ylim_val);
 
 axes(sp_ax(4))
 hold on;

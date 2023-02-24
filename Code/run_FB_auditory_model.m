@@ -8,12 +8,12 @@ function run_FB_auditory_model()
 %   Copyright 2023 Satyabrata Parida, Shi Tong Liu, & Srivatsun Sadagopan
 
 %% Initialize paramaters 
-inclass_call_type= 'Chut'; % The model is trained to classify inclass_call_type from the rest of the call types within the folder dir_struct.mel_spectrogram_dir
+inclass_call_type= 'Wheek'; % The model is trained to classify inclass_call_type from the rest of the call types within the folder dir_struct.mel_spectrogram_dir
 
 model_params= struct( ...
     'num_fragments', 200, ... % number of initial random features. The higher, the better (but could be resource intensive). A good ballpark number = ~5x-10x the number of (inclass + outclass) calls 
     'xcorr_routine', 'norm', ... % cross-correlation routine:  options: 'norm' (recommended), 'raw', 'bf_norm'
-    'comp_routine', 'parfor', ... % computational routine: options: 'parfor' (recommended), 'gpu', 'for'
+    'comp_routine', 'gpu', ... % computational routine: options: 'parfor' (recommended), 'gpu', 'for'
     'fs_Hz', 1000, ... % (temporal) sampling frequency of spectrogram/cochleagram 
     'num_MIFsets', 1, ... % How many instantiations of the model. Good to ensure convergence of the model. 
     'do_frag', 1, ... % whether to generate fragments or not, should be set to 1
@@ -29,7 +29,7 @@ dir_struct.mel_spectrogram_dir= [dir_struct.Root_FBAM_dir filesep 'Mel_spect' fi
 dir_struct.Root_out_dir= [dir_struct.Root_FBAM_dir filesep 'Trained_models' filesep]; % Folder that has trained models 
 dir_struct.FBAM_dir= sprintf('%s%s_vs_rest_FBAM_%s', dir_struct.Root_out_dir, inclass_call_type, model_params.xcorr_routine); % xcorr_routine should be in the name because a different model
 count= dir([dir_struct.FBAM_dir '*']);
-count= numel(count);
+% count= numel(count);
 count= numel(count)+1;
 dir_struct.FBAM_dir= sprintf('%s_run%d%s', dir_struct.FBAM_dir, count, filesep);
 dir_struct.FBAM_list_dir= sprintf('%strain_test_list%s', dir_struct.FBAM_dir, filesep);
