@@ -1,18 +1,20 @@
-function  varargout = getROC(result_fname, figNum)
+function  [AUC, roc_data, test_detect_inclass, test_detect_outclass, threshold_edges]= getROC(result_fname, figNum)
 % Usage: GETROC Generate ROC curve based on classifier testing results
 %   GETROC(result_fname) plots ROC and DET curves of classifier data in result_fname
 %
 %   AUC = GETROC(result_fname) outputs Area Under the Curve of ROC. Will NOT plot
 %   ROC or DET curves
 %
-%   [R,DETECT1,DETECT2,TSTEP] = GETROC(result_fname) outputs rate data R (first
-%   row is hit rate, second row is false alram rate, and third row is
-%   missed detection rate), inclass detect array DETECT1, inclass detect
+%   [roc_data,DETECT1,DETECT2,TSTEP,AUC] = GETROC(result_fname) 
+% outputs rate data , 
+%   inclass detect array DETECT1, inclass detect
 %   array DETECT2, and threshold step vector THSTEP
 % Inputs:
 %   1. result_fname [string]: test output filename to load 
 %   2. figNum [scalar int]: figure number to plot 
-% 
+% Outputs:
+%   1. roc_data [structure]: Fields are hit, false alram, and missed detection rate
+%   2. test_detect_inclass
 % -----------------------------------------------------------------------
 %   Copyright 2023 Satyabrata Parida, Shi Tong Liu, & Srivatsun Sadagopan
 
@@ -35,8 +37,8 @@ end
 % COMPUTES WEIGHTED SUM OF MIFS
 L = length(MIFresults.weights);
 % find direction of summation, sum across all MIFs
-s1dim = find(size(MIFresults.inclasstestdetect)==L);
-s2dim = find(size(MIFresults.outclasstestdetect)==L);
+s1dim = 1; % find(size(MIFresults.inclasstestdetect)==L);
+s2dim = 1; % find(size(MIFresults.outclasstestdetect)==L);
 
 % match weight vector dimension to inclasstestdetect array dimension
 wdim = find(size(MIFresults.weights)==L);
@@ -64,14 +66,15 @@ test_detect_outclass = sum(bsxfun(@times, MIFresults.outclasstestdetect,weight2)
 % threshold_edges= [0 min(test_detect_outclass):(max(test_detect_inclass)-min(test_detect_outclass))/100:max(test_detect_inclass)];
 threshold_edges= [0 prctile(unique([test_detect_inclass, test_detect_outclass]), 1:100) inf];
 
-R  = zeros(3,numel(threshold_edges));
-for j = 1:1:numel(threshold_edges)
-    hit = sum(test_detect_inclass>=threshold_edges(j))/numel(test_detect_inclass);  % true positive
-    fa = sum(test_detect_outclass>=threshold_edges(j))/numel(test_detect_outclass);  % false positive
-    md = sum(test_detect_inclass<threshold_edges(j))/numel(test_detect_inclass);  % missed detection
-    R(:,j) = [hit; fa; md];
+roc_data= struct('hit', nan, 'false_alarm', nan, 'miss', nan);
+for thresh_var = 1:1:numel(threshold_edges)
+    roc_data(thresh_var).hit = sum(test_detect_inclass>=threshold_edges(thresh_var))/numel(test_detect_inclass);  % true positive
+    roc_data(thresh_var).false_alarm = sum(test_detect_outclass>=threshold_edges(thresh_var))/numel(test_detect_outclass);  % false positive
+    roc_data(thresh_var).miss = sum(test_detect_inclass<threshold_edges(thresh_var))/numel(test_detect_inclass);  % missed detection
 end
 
+
+AUC = trapz(fliplr([roc_data.false_alarm]), fliplr([roc_data.hit]));  % numerical integration of AUC
 
 % PLOT/OUTPUT OPTIONS
 if nargout==0
@@ -101,7 +104,7 @@ if nargout==0
 
     nexttile;
     sp_ax(2)= gca;  % Weighted final response for inclass and outclass calls 
-    plot(R(2,:),R(1,:),'-o','MarkerSize',6); hold on
+    plot([roc_data.false_alarm], [roc_data.hit],'-o','MarkerSize', 6); hold on
     set(gca,'XLim',[0 1],'YLim',[0 1],...
         'XTick',0:0.2:1,'YTick',0:0.2:1,...
         'XTickLabel',{'0','20','40','60','80','100'},...
@@ -115,37 +118,9 @@ if nargout==0
     end
     box off;
     
-    AUC = trapz(fliplr(R(2,:)), fliplr(R(1,:)));  % numerical integration of AUC
     title(fig1_han, sprintf('AUC=%.2f', AUC))
-
-    %     xx = probit(R(2,:));
-    %     yy = probit(R(3,:));
-    %     ticks = probit([0.002 0.004 0.01 0.02 0.04 0.1 0.2 0.4]);
-    %     figure(figHan);
-    %     sp_ax(2)= subplot(1,2,2);  % DET curve
-    %     plot(xx,yy,'-o','MarkerSize',6); hold on
-    %     set(gca,'XLim',[ticks(1) ticks(end)],'YLim',[ticks(1) ticks(end)],...
-    %         'XTick',ticks,'YTick',ticks,'XGrid','on','YGrid','on',...
-    %         'XTickLabel',{'.2','.4','.1','2','4','10','20','40'},...
-    %         'YTickLabel',{'.2','.4','.1','2','4','10','20','40'}); axis square
-    %     box off;
-    %     set(get(gca,'XLabel'),'String','False Alarm Rate (%)');
-    %     set(get(gca,'YLabel'),'String','Missed Detection Rate (%)');
-
     set(findall(gcf,'-property','FontSize'),'FontSize', 12);
 
-elseif nargout==1
-    AUC = trapz(fliplr(R(2,:)), fliplr(R(1,:)));  % numerical integration of AUC
-    varargout{1} = AUC;
-
-elseif nargout==4
-    varargout{1} = R;
-    varargout{2} = test_detect_inclass;
-    varargout{3} = test_detect_outclass;
-    varargout{4} = threshold_edges;
-
-else
-    error('Invalid Number of Outputs')
 end
 
 % 
