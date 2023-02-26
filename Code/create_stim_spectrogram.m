@@ -11,18 +11,18 @@ function create_stim_spectrogram(varargin)
 %   -> default verbose: true (for inloop printing)
 %
 % To set a different input stimulus folder, call
-% create_stim_spectrogram(..., 'stim_dir', input_stim_dir): where 
+% create_stim_spectrogram(..., 'stim_dir', input_stim_dir): where
 %   -> input_stim_dir [string]: path to root input stimulus folder
-% 
+%
 % To set a different output spectrogram folder, call
-% create_stim_spectrogram(..., 'mel_spectrogram_dir', output_spectrogram_dir): 
-% where 
+% create_stim_spectrogram(..., 'mel_spectrogram_dir', output_spectrogram_dir):
+% where
 %   -> output_spectrogram_dir [string]: path where output spectrograms will
 %       be saved
 %
 % To use different spectrogram parameters, call
-% create_stim_spectrogram(..., 'mel_spect_params', mel_spect_params): 
-% where 
+% create_stim_spectrogram(..., 'mel_spect_params', mel_spect_params):
+% where
 %   -> mel_spect_params [structure]: should have all or some of the
 %   following fields (default values following colon)
 %       'tWindow_s' [scalar]: 50e-3
@@ -30,7 +30,7 @@ function create_stim_spectrogram(varargin)
 %       'FrequencyRange_Hz' [numeric array, size 2]: [80, 20e3]
 %       'NumBands' [scalar]: 64
 %       'level_dBSPL' [scalar]: 65
-% 
+%
 % To suppress in-loop printing on command line, use create_stim_spectrogram(...,
 % 'verbose', false).
 %
@@ -43,16 +43,17 @@ function create_stim_spectrogram(varargin)
 
 % Default directory structure.
 Root_FBAM_Dir= fileparts(pwd);
-def_stim_dir= [Root_FBAM_Dir filesep 'Stimuli' filesep]; % Default stimuli root folder 
-def_mel_spectrogram_dir= [Root_FBAM_Dir filesep 'Mel_spect' filesep]; % Default spectrogram root folder 
-def_mel_spect_params= struct('tWindow_s', 50e-3, 'Fs_SG_Hz', 1e3, 'FrequencyRange_Hz', [80, 20e3], 'NumBands', 64, 'level_dBSPL', 65); % Default spectrogram parameters 
+def_stim_dir= [Root_FBAM_Dir filesep 'Stimuli' filesep]; % Default stimuli root folder
+def_mel_spectrogram_dir= [Root_FBAM_Dir filesep 'Mel_spect' filesep]; % Default spectrogram root folder
+def_mel_spect_params= struct('tWindow_s', 50e-3, 'Fs_SG_Hz', 1e3, 'FrequencyRange_Hz', [80, 20e3], 'NumBands', 64, 'level_dBSPL', 65); % Default spectrogram parameters
 
-% Parse inputs 
+% Parse inputs
 fun_paramsIN=inputParser;
-default_params= struct('stim_dir', def_stim_dir, 'mel_spectrogram_dir', def_mel_spectrogram_dir, 'verbose', true, 'mel_spect_params', def_mel_spect_params);
+default_params= struct('stim_dir', def_stim_dir, 'mel_spectrogram_dir', def_mel_spectrogram_dir, 'verbose', true, 'mel_spect_params', def_mel_spect_params, 'comp_routine', 'parfor');
 addParameter(fun_paramsIN, 'stim_dir', default_params.stim_dir, @ischar)
 addParameter(fun_paramsIN, 'mel_spectrogram_dir', default_params.mel_spectrogram_dir, @ischar)
 addParameter(fun_paramsIN, 'mel_spect_params', default_params.mel_spect_params, @isstruct)
+addParameter(fun_paramsIN, 'comp_routine', default_params.comp_routine, @ischar)
 addParameter(fun_paramsIN, 'verbose', default_params.verbose, @islogical)
 fun_paramsIN.KeepUnmatched= true;
 parse(fun_paramsIN, varargin{:});
@@ -64,76 +65,56 @@ for fieldVar=1:length(missing_fields)
     mel_spect_params.(missing_fields{fieldVar})= def_mel_spect_params.(missing_fields{fieldVar});
 end
 
-%% Read stimuli 
-doPlot= 0;
-doSave= 1;
-
+%% Read stimuli
 all_sound_files= dir([fun_paramsIN.Results.stim_dir '**' filesep '*.*']);
 valid_ext= {'.wav', '.mp3', 'flac', '.m4a', '.mp4', '.ogg', '.oga', '.opus'};
 valid_file_inds= cellfun(@(x) any(contains(x, valid_ext)), {all_sound_files.name}');
 all_sound_files= all_sound_files(valid_file_inds);
 
-% Check how many stimuli were found 
+% Check how many stimuli were found
 if numel(all_sound_files)==0
     fprintf('Did not find any sound files inside %s\n', fun_paramsIN.Results.stim_dir)
 elseif numel(all_sound_files)>0
     fprintf('Found %d sound files, Creating mel-scaled spectrograms now\n', numel(all_sound_files))
 end
 
-%% Make sure directory names are absolute 
+%% Make sure directory names are absolute
 stim_dir= helper.GetFullPath(fun_paramsIN.Results.stim_dir);
 mel_spectrogram_dir= helper.GetFullPath(fun_paramsIN.Results.mel_spectrogram_dir);
 
-%% Main loop to get/create spectrograms 
-
-already_exist_count= 0;
-for fileVar=1:length(all_sound_files)
-
-    % read the audio file
-    cur_fStruct= all_sound_files(fileVar);
-    cur_fName_in= [cur_fStruct.folder filesep cur_fStruct.name];
-    [~,~,stim_ext]= fileparts(cur_fName_in);
-
-    cur_fName_out= strrep(cur_fName_in, stim_dir, mel_spectrogram_dir);
-    cur_fName_out= strrep(cur_fName_out, stim_ext, '.mat');
-
-    if ~exist(cur_fName_out, 'file')
-        [cur_stim, fs_stim]= audioread(cur_fName_in);
-
-        % get mel spectrogram
-        [mel_S_dB,mel_freq_Hz, mel_time, mel_spect_params]= get_mel_spect(cur_stim, fs_stim, mel_spect_params);
-
-        % plot spectrogram
-        if doPlot
-            plot_mel_spectrogram(mel_time, mel_freq_Hz, mel_S_dB, cur_fStruct);
-        end
-
-        % save spectrogram
-        if doSave
-            if ~isfolder(fileparts(cur_fName_out))
-                mkdir(fileparts(cur_fName_out));
-            end
-            mel_spectrogram_struct= struct('mel_S_dB', mel_S_dB, 'mel_freq_Hz', mel_freq_Hz, 'stim_filename', cur_fName_in, 'mel_spect_params', mel_spect_params);
-            save(cur_fName_out, 'mel_spectrogram_struct');
-        end
-        if fun_paramsIN.Results.verbose
-            fprintf('-> %d/%d: Saved spectrogram %s for stimulus %s! \n', fileVar, length(all_sound_files), cur_fName_in, cur_fName_out);
-        end
-    else
-        if fun_paramsIN.Results.verbose
-            fprintf('(Already exists) %d/%d: Spectrogram %s for stimulus %s! \n', fileVar, length(all_sound_files), cur_fName_in, cur_fName_out);
-        end
-        already_exist_count= already_exist_count+1;
+%% figure out xcorr_routine and parallel computing options
+comp_routine= fun_paramsIN.Results.comp_routine;
+if strcmp(fun_paramsIN.Results.comp_routine, 'parfor')
+    if ~license('test','Distrib_Computing_Toolbox')
+        comp_routine= 'for';
     end
+end
+%% Main loop to get/create spectrograms
+already_exist_array= zeros(length(all_sound_files), 1);
+
+switch comp_routine
+    case 'parfor'
+
+        parfor fileVar=1:length(all_sound_files)
+            already_exist_array(fileVar)= sg_routine(fileVar, all_sound_files, stim_dir, mel_spectrogram_dir, mel_spect_params, fun_paramsIN);
+        end
+
+    otherwise % should be for 
+
+        for fileVar=1:length(all_sound_files)
+            already_exist_array(fileVar)= sg_routine(fileVar, all_sound_files, stim_dir, mel_spectrogram_dir, mel_spect_params, fun_paramsIN);
+        end
 end
 
 if fun_paramsIN.Results.verbose
     fprintf('--------\n--------\n--------\n');
 end
 
+already_exist_count= sum(already_exist_array);
 fprintf('Done. %d files already existed and saved %d new files.\n', already_exist_count, length(all_sound_files)-already_exist_count)
-
 end
+
+
 
 %% Sub-functions
 function [mel_S_dB, mel_freq_Hz, mel_time, mel_spect_params]= get_mel_spect(stim, fs_Hz, mel_spect_params)
@@ -187,4 +168,48 @@ set(gca, 'YScale', 'log', 'YDir', 'normal', 'YTick', [.2, .5, 1, 2, 4, 8, 16], '
 xlabel('Time (s)')
 ylabel('Freq, kHz')
 title(sprintf('MelSpect: %s', cur_fStruct.name), 'Interpreter','none')
+end
+
+function flag_already_exist= sg_routine(fileVar, all_sound_files, stim_dir, mel_spectrogram_dir, mel_spect_params, fun_paramsIN)
+
+doPlot= 0;
+doSave= 1;
+
+% read the audio file
+cur_fStruct= all_sound_files(fileVar);
+cur_fName_in= [cur_fStruct.folder filesep cur_fStruct.name];
+[~,~,stim_ext]= fileparts(cur_fName_in);
+
+cur_fName_out= strrep(cur_fName_in, stim_dir, mel_spectrogram_dir);
+cur_fName_out= strrep(cur_fName_out, stim_ext, '.mat');
+
+if ~exist(cur_fName_out, 'file')
+    [cur_stim, fs_stim]= audioread(cur_fName_in);
+
+    % get mel spectrogram
+    [mel_S_dB,mel_freq_Hz, mel_time, mel_spect_params]= get_mel_spect(cur_stim, fs_stim, mel_spect_params);
+
+    % plot spectrogram
+    if doPlot
+        plot_mel_spectrogram(mel_time, mel_freq_Hz, mel_S_dB, cur_fStruct);
+    end
+
+    % save spectrogram
+    if doSave
+        if ~isfolder(fileparts(cur_fName_out))
+            mkdir(fileparts(cur_fName_out));
+        end
+        mel_spectrogram_struct= struct('mel_S_dB', mel_S_dB, 'mel_freq_Hz', mel_freq_Hz, 'stim_filename', cur_fName_in, 'mel_spect_params', mel_spect_params);
+        save(cur_fName_out, 'mel_spectrogram_struct');
+    end
+    if fun_paramsIN.Results.verbose
+        fprintf('-> %d/%d: Saved spectrogram %s for stimulus %s! \n', fileVar, length(all_sound_files), cur_fName_in, cur_fName_out);
+    end
+    flag_already_exist= 0;
+else
+    if fun_paramsIN.Results.verbose
+        fprintf('(Already exists) %d/%d: Spectrogram %s for stimulus %s! \n', fileVar, length(all_sound_files), cur_fName_in, cur_fName_out);
+    end
+    flag_already_exist= 1;
+end
 end
