@@ -68,7 +68,10 @@ end
 doPlot= 0;
 doSave= 1;
 
-all_sound_files= dir([fun_paramsIN.Results.stim_dir '**' filesep '*.wav']);
+all_sound_files= dir([fun_paramsIN.Results.stim_dir '**' filesep '*.*']);
+valid_ext= {'.wav', '.mp3', 'flac', '.m4a', '.mp4', '.ogg', '.oga', '.opus'};
+valid_file_inds= cellfun(@(x) any(contains(x, valid_ext)), {all_sound_files.name}');
+all_sound_files= all_sound_files(valid_file_inds);
 
 % Check how many stimuli were found 
 if numel(all_sound_files)==0
