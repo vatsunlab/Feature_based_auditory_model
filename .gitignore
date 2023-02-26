@@ -1,3 +1,4 @@
 Code/+hidden/**
 Trained_models/**
 !Trained_models/readme.txt
+debugging_files/**
