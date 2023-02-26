@@ -11,7 +11,7 @@ function run_FB_auditory_model()
 %   Copyright 2023 Satyabrata Parida, Shi Tong Liu, & Srivatsun Sadagopan
 
 %% Initialize paramaters 
-inclass_call_type= 'Purr'; % The model is trained to classify inclass_call_type from the rest of the call types within the folder dir_struct.mel_spectrogram_dir
+inclass_call_type= 'Purr'; % The model is trained to clasify inclass_call_type from the rest of the call types within the folder dir_struct.mel_spectrogram_dir
 
 model_params= struct( ...
     'num_fragments', 200, ... % number of initial random features. The higher, the better (but could be resource intensive). A good ballpark number = ~5x-10x the number of (inclass + outclass) calls 
@@ -52,7 +52,8 @@ dir_struct.FBAM_list_dir= sprintf('%strain_test_list%s', dir_struct.FBAM_dir, fi
 
 %% create training/testing lists 
 train_test_split= 0.75;
-helper.split_train_test_list(inclass_call_type, dir_struct.mel_spectrogram_dir, dir_struct.FBAM_list_dir, train_test_split); % create training and testing list by splitting all files 
+max_calls_per_group= 50;
+helper.split_train_test_list(inclass_call_type, dir_struct.mel_spectrogram_dir, dir_struct.FBAM_list_dir, max_calls_per_group, train_test_split); % create training and testing list by splitting all files 
 
 %% Train FB model 
 fbam.train_FB_auditory_model(inclass_call_type, dir_struct, model_params);
