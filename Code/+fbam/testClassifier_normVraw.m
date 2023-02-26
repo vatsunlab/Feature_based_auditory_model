@@ -59,10 +59,10 @@ testdetect_outclass= nan(numel(MIFfiles), numel(calls_outclass));
 weights= nan(numel(MIFfiles), 1);
 
 %% figure out xcorr_routine and parallel computing options
-
+comp_routine= fun_paramsIN.Results.comp_routine;
 if strcmp(fun_paramsIN.Results.comp_routine, 'parfor')
     if ~license('test','Distrib_Computing_Toolbox')
-        fun_paramsIN.Results.comp_routine= 'for';
+        comp_routine= 'for';
     end
 end
 
@@ -77,8 +77,8 @@ for mifVar = 1:numel(MIFfiles)
     end
 
     % calculate feature correlation values for inclass and outclass calls
-    testcorr_inclass(mifVar,:) = fbam.getXcorr_normVraw(calls_inclass, Flo, Fhi, template, fs_feat, 'comp_routine', fun_paramsIN.Results.comp_routine, 'xcorr_routine', fun_paramsIN.Results.xcorr_routine);
-    testcorr_outclass(mifVar,:) = fbam.getXcorr_normVraw(calls_outclass, Flo, Fhi, template, fs_feat, 'comp_routine', fun_paramsIN.Results.comp_routine, 'xcorr_routine', fun_paramsIN.Results.xcorr_routine);
+    testcorr_inclass(mifVar,:) = fbam.getXcorr_normVraw(calls_inclass, Flo, Fhi, template, fs_feat, 'comp_routine', comp_routine, 'xcorr_routine', fun_paramsIN.Results.xcorr_routine);
+    testcorr_outclass(mifVar,:) = fbam.getXcorr_normVraw(calls_outclass, Flo, Fhi, template, fs_feat, 'comp_routine', comp_routine, 'xcorr_routine', fun_paramsIN.Results.xcorr_routine);
 
     testdetect_inclass(mifVar,:) = (testcorr_inclass(mifVar,:)>=thresh);
     testdetect_outclass(mifVar,:) = (testcorr_outclass(mifVar,:)>=thresh);
