@@ -20,6 +20,12 @@ fs_Hz= model_params.fs_Hz; % binwidth = 1/fs_Hz
 % dir_struct.FBAM_dir= sprintf('%s%s_vs_rest_FBAM_%s%s', dir_struct.RootOutDir, inclass_call_type, xcorr_routine, filesep); % xcorr_routine should be in the name because a different model
 % dir_struct.FBAM_list_dir= sprintf('%strain_test_list%s', dir_struct.FBAM_dir, filesep);
 
+%% Convert paths to absolute paths 
+dir_struct.FBAM_dir= helper.GetFullPath(dir_struct.FBAM_dir);
+dir_struct.FBAM_list_dir= helper.GetFullPath(dir_struct.FBAM_list_dir);
+dir_struct.mel_spectrogram_dir= helper.GetFullPath(dir_struct.mel_spectrogram_dir);
+dir_struct.Root_out_dir= helper.GetFullPath(dir_struct.Root_out_dir);
+
 %% Other simulation parameters
 simulation_params= struct('inclass_call_type', inclass_call_type, 'fs_Hz', model_params.fs_Hz, 'NumOfFragments_All', model_params.num_fragments, 'xcorr_routine', model_params.xcorr_routine);
 simul_param_fName= sprintf('%sSimulationParams.mat', dir_struct.FBAM_dir);
