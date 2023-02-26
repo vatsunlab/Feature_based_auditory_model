@@ -66,6 +66,9 @@ switch fun_paramsIN.Results.comp_routine
 
             % INPUT CALL IS COCHLEAGRAM
             call_cog_mr= mel_spectrogram_struct.mel_S_dB;
+            minus_inf_inds= isinf(call_cog_mr) & (call_cog_mr<0);
+            call_cog_mr(minus_inf_inds)= min(min(call_cog_mr(~minus_inf_inds)));
+
             if fs_Hz~=mel_spectrogram_struct.mel_spect_params.Fs_SG_Hz
                 call_cog_mr= resample(call_cog_mr', fs_Hz, mel_spectrogram_struct.mel_spect_params.Fs_SG_Hz)';
             end
@@ -130,6 +133,9 @@ switch fun_paramsIN.Results.comp_routine
             mel_spectrogram_struct= mel_spectrogram_struct.mel_spectrogram_struct;
 
             call_cog_mr= mel_spectrogram_struct.mel_S_dB;
+            minus_inf_inds= isinf(call_cog_mr) & (call_cog_mr<0);
+            call_cog_mr(minus_inf_inds)= min(min(call_cog_mr(~minus_inf_inds)));
+
             if fs_Hz~=mel_spectrogram_struct.mel_spect_params.Fs_SG_Hz
                 call_cog_mr= resample(call_cog_mr', fs_Hz, mel_spectrogram_struct.mel_spect_params.Fs_SG_Hz)';
             end
