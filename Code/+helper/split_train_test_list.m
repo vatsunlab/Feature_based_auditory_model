@@ -23,6 +23,9 @@ end
 
 fprintf('Creating lists in %s\n', model_list_output_dir)
 
+mel_spectrogram_dir= GetFullPath(mel_spectrogram_dir);
+model_list_output_dir= GetFullPath(model_list_output_dir);
+
 %% Read all call names and split into inclass/outclass groups 
 rng(0); % set seed for reproducibility 
 

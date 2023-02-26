@@ -80,6 +80,10 @@ elseif numel(all_sound_files)>0
     fprintf('Found %d sound files, Creating mel-scaled spectrograms now\n', numel(all_sound_files))
 end
 
+%% Make sure directory names are absolute 
+stim_dir= helper.GetFullPath(fun_paramsIN.Results.stim_dir);
+mel_spectrogram_dir= helper.GetFullPath(fun_paramsIN.Results.mel_spectrogram_dir);
+
 %% Main loop to get/create spectrograms 
 
 already_exist_count= 0;
@@ -88,9 +92,10 @@ for fileVar=1:length(all_sound_files)
     % read the audio file
     cur_fStruct= all_sound_files(fileVar);
     cur_fName_in= [cur_fStruct.folder filesep cur_fStruct.name];
+    [~,~,stim_ext]= fileparts(cur_fName_in);
 
-    cur_fName_out= strrep(cur_fName_in, fun_paramsIN.Results.stim_dir, fun_paramsIN.Results.mel_spectrogram_dir);
-    cur_fName_out= strrep(cur_fName_out, '.wav', '.mat');
+    cur_fName_out= strrep(cur_fName_in, stim_dir, mel_spectrogram_dir);
+    cur_fName_out= strrep(cur_fName_out, stim_ext, '.mat');
 
     if ~exist(cur_fName_out, 'file')
         [cur_stim, fs_stim]= audioread(cur_fName_in);
