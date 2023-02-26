@@ -1,4 +1,4 @@
-function split_train_test_list(inclass_call_type, mel_spectrogram_dir, model_list_output_dir, train_test_split)
+function split_train_test_list(inclass_call_type, mel_spectrogram_dir, model_list_output_dir, max_calls_per_group, train_test_split)
 % function split_train_test_list(inclass_call_type, mel_spectrogram_dir, model_list_output_dir, train_test_split)
 % Usage: Split inclass and outclass data for training and testing 
 % Inputs:
@@ -23,8 +23,8 @@ end
 
 fprintf('Creating lists in %s\n', model_list_output_dir)
 
-mel_spectrogram_dir= GetFullPath(mel_spectrogram_dir);
-model_list_output_dir= GetFullPath(model_list_output_dir);
+mel_spectrogram_dir= helper.GetFullPath(mel_spectrogram_dir);
+model_list_output_dir= helper.GetFullPath(model_list_output_dir);
 
 %% Read all call names and split into inclass/outclass groups 
 rng(0); % set seed for reproducibility 
@@ -37,6 +37,8 @@ outclass_indices= ~strcmpi(all_call_names, inclass_call_type);
 
 inclass_melSGnames= all_mel_spects(inclass_indices);
 inclass_melSGnames= cellfun(@(x,y) [x filesep y], {inclass_melSGnames.folder}', {inclass_melSGnames.name}', 'UniformOutput', false);
+nCalls_inclass_train= min(numel(inclass_melSGnames), max_calls_per_group);
+inclass_melSGnames= randsample(inclass_melSGnames, nCalls_inclass_train);
 
 % nontarget = rest of the calls 
 outclass_melSGnames= all_mel_spects(outclass_indices);
@@ -73,5 +75,5 @@ end
 
 %% Functions 
 function call_name= extract_call_name(dirName)
-call_name= extractAfter(dirName, ['Mel_spect' filesep]);
+call_name= dirName((length(fileparts(dirName))+2):end);
 end
