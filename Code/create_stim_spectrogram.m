@@ -79,8 +79,8 @@ elseif numel(all_sound_files)>0
 end
 
 %% Make sure directory names are absolute
-stim_dir= helper.GetFullPath(fun_paramsIN.Results.stim_dir);
-mel_spectrogram_dir= helper.GetFullPath(fun_paramsIN.Results.mel_spectrogram_dir);
+stim_dir= helper.get_full_path(fun_paramsIN.Results.stim_dir);
+mel_spectrogram_dir= helper.get_full_path(fun_paramsIN.Results.mel_spectrogram_dir);
 
 %% figure out xcorr_routine and parallel computing options
 comp_routine= fun_paramsIN.Results.comp_routine;
