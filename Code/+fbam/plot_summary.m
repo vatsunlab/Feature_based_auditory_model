@@ -61,6 +61,7 @@ cf_upper_kHz= mif_table_data.CF_Hz .* (2.^ (mif_table_data.BW_octave/2))/1e3;
 cf_lower_kHz= mif_table_data.CF_Hz .* (2.^ (-mif_table_data.BW_octave/2))/1e3;
 dur_ms= mif_table_data.Duration_sec*1e3;
 time_scale= 'log';
+nMIFs= numel(dur_ms);
 
 best_mif_fname= mif_filenames{1};
 best_mif_feat_data= load(best_mif_fname);
@@ -85,10 +86,18 @@ set(gca, 'XScale', time_scale)
 ylim([min(cf_lower_kHz), max(cf_upper_kHz)])
 if strcmp(time_scale, 'linear')
     xlim([0, max(dur_ms)+30])
-    set(gca, 'XTick', round(linspace(min(dur_ms), max(dur_ms), 4)/100)*100)
+    if nMIFs>1
+        set(gca, 'XTick', round(linspace(min(dur_ms), max(dur_ms), 4)/100)*100)
+    else
+        set(gca, 'XTick', [0 round(dur_ms) round(dur_ms)+25]);
+    end
 elseif strcmp(time_scale, 'log')
     xlim([min(dur_ms)/1.15, max(dur_ms)*1.15])
-    set(gca, 'XTick', round(logspace(log10(min(dur_ms)), log10(max(dur_ms)), 4)/10)*10)
+    if nMIFs>1
+        set(gca, 'XTick', round(logspace(log10(min(dur_ms)), log10(max(dur_ms)), 4)/10)*10)
+    else 
+        set(gca, 'XTick', round([1/1.15 1 1.15]*dur_ms/10)*10)
+    end
 end
 xlabel('MIF dur, ms');
 ylabel('Bandwidth, kHz');
