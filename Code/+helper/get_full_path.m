@@ -32,7 +32,6 @@ else
     full_path= in_path;
 end
 
-
 if strcmp(in_path(end), filesep)
     full_path= fullfile(full_path, filesep);
 end

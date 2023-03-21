@@ -33,8 +33,8 @@ function run_FB_auditory_model(varargin)
 % run_FB_auditory_model(..., 'dir_struct', dir_struct): where
 %   -> dir_struct [structure]: should have all or some of the
 %   following fields (default values following colon)
-%       'mel_spectrogram_dir' [string]  : '../Mel_spect/' -> input mel-spectrogram dir
-%       'FBAM_dir' [string]             : '../Trained_models/<inclass_call_type>_vs_rest_FBAM_<model_params.xcorr_routine>_run<#>/' -> FBAM output dir
+%       'mel_spectrogram_dir' [string]  : '../Mel_spect/'           -> input mel-spectrogram dir
+%       'Root_out_dir' [string]             : '../Trained_models/'  -> FBAM root output dir. Each model will be a subfolder inside this folder.
 % -----------------------------------------------------------------------
 %   Copyright 2023 Satyabrata Parida, Shi Tong Liu, & Srivatsun Sadagopan
 
@@ -57,8 +57,7 @@ Root_FBAM_dir= fileparts(pwd); % Root folder
 def_dir_struct.mel_spectrogram_dir= [Root_FBAM_dir filesep 'Mel_spect' filesep]; % Folder that has the mel spectrograms, each subfolder should be different call/sound type
 
 %  Folders that will be created (if don't exist already)
-Root_out_dir= [Root_FBAM_dir filesep 'Trained_models' filesep]; % Folder that has trained models
-def_dir_struct.FBAM_dir= sprintf('%s%s_vs_rest_FBAM_%s', Root_out_dir, def_inclass_call_type, def_model_params.xcorr_routine); % xcorr_routine should be in the name because a different model
+def_dir_struct.Root_out_dir= [Root_FBAM_dir filesep 'Trained_models' filesep]; % Folder that has trained models
 
 %% Parse inputs
 fun_paramsIN=inputParser;
@@ -77,26 +76,22 @@ for fieldVar=1:length(missing_fields)
     model_params.(missing_fields{fieldVar})= def_model_params.(missing_fields{fieldVar});
 end
 
-% Look for missing fieldnames in dir_struct
-out_dir_arg_type= 'default';
 dir_struct= fun_paramsIN.Results.dir_struct;
-if any(ismember(fieldnames(dir_struct), 'FBAM_dir'))
-    % means FBAM_dir was passed as input, so need to update Root_out_dir
-    out_dir_arg_type= 'custom';
-end
 
+% Look for missing fieldnames in dir_struct
 missing_fields= setdiff(fieldnames(def_dir_struct), fieldnames(dir_struct));
 for fieldVar=1:length(missing_fields)
     dir_struct.(missing_fields{fieldVar})= def_dir_struct.(missing_fields{fieldVar});
 end
 
 %%
-dir_struct = helper.bookkeep_dirstruct(dir_struct, Root_out_dir, out_dir_arg_type); 
+dir_struct.FBAM_dir= sprintf('%s%s_vs_rest_FBAM_%s', dir_struct.Root_out_dir, inclass_call_type, model_params.xcorr_routine); % xcorr_routine should be in the name because a different model
+dir_struct = helper.bookkeep_dirstruct(dir_struct); 
 
 %% create training/testing lists
 train_test_split= 0.75;
 max_calls_per_group= 50;
-helper.split_train_test_list(fun_paramsIN.Results.inclass_call_type, dir_struct.mel_spectrogram_dir, dir_struct.FBAM_list_dir, max_calls_per_group, train_test_split); % create training and testing list by splitting all files
+helper.split_train_test_list(inclass_call_type, dir_struct.mel_spectrogram_dir, dir_struct.FBAM_list_dir, max_calls_per_group, train_test_split); % create training and testing list by splitting all files
 
 %% Train FB model
-fbam.train_FB_auditory_model(fun_paramsIN.Results.inclass_call_type, dir_struct, model_params);
+fbam.train_FB_auditory_model(inclass_call_type, dir_struct, model_params);
