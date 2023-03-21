@@ -39,9 +39,9 @@ function create_stim_spectrogram(varargin)
 % -----------------------------------------------------------------------
 %   Copyright 2023 Satyabrata Parida, Shi Tong Liu, & Srivatsun Sadagopan
 
-%% Parse input
+%% Read input 
 
-% Default directory structure.
+% Default directory structure 
 Root_FBAM_Dir= fileparts(pwd);
 def_stim_dir= [Root_FBAM_Dir filesep 'Stimuli' filesep]; % Default stimuli root folder
 def_mel_spectrogram_dir= [Root_FBAM_Dir filesep 'Mel_spect' filesep]; % Default spectrogram root folder

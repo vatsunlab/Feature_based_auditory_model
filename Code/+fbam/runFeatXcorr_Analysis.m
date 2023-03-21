@@ -65,7 +65,7 @@ for fragVar = 1:numel(fragFiles)
 
     if rem(fragVar, 10)==0
         fprintf(repmat('\b', 1, print_handle))
-        print_handle= fprintf('   -> %.0f%% done %d/%d features done', 100*fragVar/numel(fragFiles), fragVar, numel(fragFiles));
+        print_handle= fprintf('   -> %.0f%% (%d/%d features) done', 100*fragVar/numel(fragFiles), fragVar, numel(fragFiles));
     end
     
 end

@@ -24,7 +24,7 @@ fs_Hz= model_params.fs_Hz; % binwidth = 1/fs_Hz
 dir_struct.FBAM_dir= helper.get_full_path(dir_struct.FBAM_dir);
 dir_struct.FBAM_list_dir= helper.get_full_path(dir_struct.FBAM_list_dir);
 dir_struct.mel_spectrogram_dir= helper.get_full_path(dir_struct.mel_spectrogram_dir);
-dir_struct.Root_out_dir= helper.get_full_path(dir_struct.Root_out_dir);
+% dir_struct.Root_out_dir= helper.get_full_path(dir_struct.Root_out_dir);
 
 %% Other simulation parameters
 simulation_params= struct('inclass_call_type', inclass_call_type, 'fs_Hz', model_params.fs_Hz, 'NumOfFragments_All', model_params.num_fragments, 'xcorr_routine', model_params.xcorr_routine);
