@@ -33,7 +33,7 @@ function run_FB_auditory_model(varargin)
 % run_FB_auditory_model(..., 'dir_struct', dir_struct): where
 %   -> dir_struct [structure]: should have all or some of the
 %   following fields (default values following colon)
-%       'mel_spectrogram_dir' [string]  : '../Mel_spect/'                                                                           -> input mel-spectrogram dir
+%       'mel_spectrogram_dir' [string]  : '../Mel_spect/' -> input mel-spectrogram dir
 %       'FBAM_dir' [string]             : '../Trained_models/<inclass_call_type>_vs_rest_FBAM_<model_params.xcorr_routine>_run<#>/' -> FBAM output dir
 % -----------------------------------------------------------------------
 %   Copyright 2023 Satyabrata Parida, Shi Tong Liu, & Srivatsun Sadagopan
