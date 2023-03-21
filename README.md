@@ -30,6 +30,7 @@ Note: Folders "Stimuli" and "Mel_spect" already contain guinea pig vocalization 
 1. create_stim_spectrogram. 
     * Note: You may also specify different folders for stimuli and spectrograms as input parameters. See create_stim_spectrogram help for details. 
 3. run_FB_auditory_model (after changing the variable "inclass_call_type", which sets the target/inclass call type. All other calls are considered non-target/outclass). 
+   * Note: You may also specify different folders for spectrograms and trained-model as input parameters. See run_FB_auditory_model help for details. 
 
 
 ## References 
