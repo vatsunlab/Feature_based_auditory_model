@@ -10,7 +10,7 @@ if count>0
     temp_FBAM_dir= strrep(sprintf('%s_run%d', dir_struct.FBAM_dir, count), dir_struct.Root_out_dir, '');
     inp_str= input(sprintf('Output directory (%s) already exists. \nCreate new (n) or reuse the same (s) folder?', temp_FBAM_dir), 's');
     if strcmpi(inp_str, 'n')
-        count= numel(count)+1;
+        count= count+1;
     end
 else
     % first time
